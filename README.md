@@ -1,7 +1,10 @@
-Freddie is a simple Java library that wraps access to the St. Louis Fed's FRED API
+Freddie
+------
+The unofficial [St. Louis Fed FRED API](http://api.stlouisfed.org/docs/fred/) Java Wrapper
 
-```
-String apiKey = "51ff1f1844537b524db28bddc9de4d4c";
+[Get a valid API key](http://api.stlouisfed.org/api_key.html) 
+```java
+String apiKey = "51ff1f1844537b524db28bddc9de4d44";
 String seriesId = "M08175USM144NNBR";
 Freddie freddie = new Freddie(apiKey);
 
@@ -21,3 +24,8 @@ for (Observation o : seriesWithData.getData())
 	System.out.println(seriesWithData.getId() + " Date: " + o.getDate() + " ----- " + o.getValue());
 }
 ```
+
+The following FRED API objects are currently mapped to pojos:
+* Series
+* Category
+* Release
