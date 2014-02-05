@@ -9,13 +9,14 @@ String seriesId = "M08175USM144NNBR";
 Freddie freddie = new Freddie(apiKey);
 
 /*
- * This series will not be populated with observation data
+ * This series will not be populated with observation data.
+ * However, it will contain all the series' metadata.
  */
 Series series = freddie.getSeriesById(seriesId, false);
 assert (series.getData() == null);
 
 /*
- * This one will!
+ * This one will contain both actual observational data and metadata.
  */
 Series seriesWithData = freddie.getSeriesById(seriesId, true);
 
