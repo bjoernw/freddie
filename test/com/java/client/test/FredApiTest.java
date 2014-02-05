@@ -94,4 +94,19 @@ public class FredApiTest
 			Assert.assertTrue(s.getData().isEmpty());
 		}
 	}
+	
+	@Test
+	public void categorySeriesTest()
+	{
+		List<Series> series = service.getSeriesByCategoryId(1);
+		
+		for (Series s : series)
+		{
+			System.out.println(s.getId());
+			Assert.assertNotNull(s);
+			Assert.assertNotNull(s.getId());
+			Assert.assertNull(s.getData());
+			Assert.assertTrue(s.getData().isEmpty());
+		}
+	}
 }

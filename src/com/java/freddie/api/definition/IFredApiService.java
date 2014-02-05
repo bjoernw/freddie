@@ -48,4 +48,10 @@ public interface IFredApiService
 			@Query("release_id") int releaseId,
 			@Query("api_key") String apiKey,
 			@Query("file_type") String dataReturnType);
+	
+	@GET("/category/series")
+	SeriesCollection getSeriesByCategoryId(
+			@Query("category_id") int categoryId,
+			@Query("api_key") String apiKey,
+			@Query("file_type") String dataReturnType);
 }

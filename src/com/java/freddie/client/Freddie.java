@@ -70,7 +70,13 @@ public class Freddie
 		if (series.getData() != null && !series.getData().isEmpty())
 			return series;
 
-		ObservationCollection observations = service.getObservations(series.getId(), apiKey, RETURNTYPE);
+		ObservationCollection observations = null;
+		try {
+			observations = service.getObservations(series.getId(), apiKey, RETURNTYPE);
+		} catch (Exception e) {
+			throw e;
+		}
+		
 		series.setData(observations.getObservations());
 		return series;
 	}
@@ -85,8 +91,13 @@ public class Freddie
 	 */
 	public Series getSeriesById(String seriesId, boolean withData) throws Exception
 	{
-		Series series = service.getSeries(seriesId, apiKey, RETURNTYPE);
-
+		Series series = null;
+		try {
+			series = service.getSeries(seriesId, apiKey, RETURNTYPE);
+		} catch (Exception e) {
+			throw e;
+		}
+		
 		if (series != null)
 		{
 			if (withData)
@@ -101,30 +112,58 @@ public class Freddie
 
 	public Category getCategoryById(int categoryId)
 	{
-		IFredApiService service = restAdapter.create(IFredApiService.class);
-		Category category = service.getCategoryById(categoryId, apiKey, RETURNTYPE);
+		Category category = null;
+		try {
+			category = service.getCategoryById(categoryId, apiKey, RETURNTYPE);
+		} catch (Exception e) {
+			throw e;
+		}
 
 		return category;
 	}
 
 	public List<Category> getCategoryChildren(int categoryId)
 	{
-		CategoryCollection categories = service.getCategoryChildren(categoryId, apiKey, RETURNTYPE);
+		CategoryCollection categories = null;
+		try {
+			categories = service.getCategoryChildren(categoryId, apiKey, RETURNTYPE);
+		} catch (Exception e) {
+			throw e;
+		}
+		
 		return categories.getCategories();
 	}
 
 	public Release getReleaseById(int releaseId)
 	{
-		Release release = service.getReleaseById(releaseId, apiKey, RETURNTYPE);
+		Release release = null;
+		try {
+			release = service.getReleaseById(releaseId, apiKey, RETURNTYPE);
+		} catch (Exception e) {
+			throw e;
+		}
+		
 		return release;
 	}
 
 	public List<Series> getSeriesByReleaseId(int releaseId)
 	{
-		SeriesCollection seriesCollection = service.getSeriesByReleaseId(releaseId, apiKey, RETURNTYPE);
+		SeriesCollection seriesCollection = null;
+		try {
+			seriesCollection = service.getSeriesByReleaseId(releaseId, apiKey, RETURNTYPE);
+		} catch (Exception e) {
+			throw e;
+		}
+		
 		return seriesCollection.getSeries();
 	}
-
+	
+	public List<Series> getSeriesByCategoryId(int categoryId)
+	{
+		SeriesCollection seriesCollection = service.getSeriesByCategoryId(categoryId, apiKey, RETURNTYPE);
+		return seriesCollection.getSeries();
+	}
+	
 	public String getApiKey()
 	{
 		return apiKey;
