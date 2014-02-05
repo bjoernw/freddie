@@ -1,6 +1,6 @@
 Freddie
 ------
-The unofficial St. Louis Fed FRED API Java Wrapper
+The unofficial [St. Louis Fed FRED API](http://api.stlouisfed.org/docs/fred/) Java Wrapper
 
 ```java
 String apiKey = "51ff1f1844537b524db28bddc9de4d4c";
@@ -25,6 +25,6 @@ for (Observation o : seriesWithData.getData())
 ```
 
 The following FRED API objects are currently mapped to pojos:
-Series
-Category
-Release
+* Series
+* Category
+* Release
