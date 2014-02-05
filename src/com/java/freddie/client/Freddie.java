@@ -55,7 +55,7 @@ public class Freddie
 			setEndPoint(optEndPoint);
 
 		restAdapter =
-				new RestAdapter.Builder().setEndpoint(endPoint).setLogLevel(LogLevel.FULL).setConverter(new GsonConverter(gson))
+				new RestAdapter.Builder().setEndpoint(endPoint).setLogLevel(LogLevel.NONE).setConverter(new GsonConverter(gson))
 						.build();
 		service = restAdapter.create(IFredApiService.class);
 	}
