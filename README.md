@@ -1,6 +1,6 @@
 Freddie is a simple Java library that wraps access to the St. Louis Fed's FRED API
 
-```
+```java
 String apiKey = "51ff1f1844537b524db28bddc9de4d4c";
 String seriesId = "M08175USM144NNBR";
 Freddie freddie = new Freddie(apiKey);
