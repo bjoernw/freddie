@@ -1,6 +1,6 @@
 Freddie
 ------
-The unofficial St. Louis FRED API Java Wrapper
+The unofficial St. Louis Fed FRED API Java Wrapper
 
 ```java
 String apiKey = "51ff1f1844537b524db28bddc9de4d4c";
