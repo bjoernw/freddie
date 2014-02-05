@@ -2,8 +2,9 @@ Freddie
 ------
 The unofficial [St. Louis Fed FRED API](http://api.stlouisfed.org/docs/fred/) Java Wrapper
 
+[Get a valid API key](http://api.stlouisfed.org/api_key.html) 
 ```java
-String apiKey = "51ff1f1844537b524db28bddc9de4d4c";
+String apiKey = "51ff1f1844537b524db28bddc9de4d44";
 String seriesId = "M08175USM144NNBR";
 Freddie freddie = new Freddie(apiKey);
 
