@@ -41,10 +41,11 @@ public class Freddie
 	private static RestAdapter restAdapter = null;
 	private static IFredApiService service = null;
 	private final RateLimiter rateLimiter;
+	final static String ENDPOINT = "http://api.stlouisfed.org/fred/";
 
 	public Freddie(String apiKey)
 	{
-		this(apiKey, "http://api.stlouisfed.org/fred/");
+		this(apiKey, ENDPOINT);
 	}
 
 	public Freddie(String apiKey, @Nullable String optEndPoint)
@@ -52,13 +53,29 @@ public class Freddie
 		this(apiKey,optEndPoint, 2);
 	}
 
-	public Freddie(String apiKey, @Nullable String optEndPoint, int requestsPerSecond)
+	public Freddie(String apiKey, @Nullable String optEndPoint, double requestsPerMinute)
 	{
-		rateLimiter = RateLimiter.create(requestsPerSecond);
+		this(apiKey, optEndPoint, RateLimiter.create(requestsPerMinute / 60));
+	}
+
+	public Freddie(String apiKey, @Nullable String optEndPoint, RateLimiter rateLimiter)
+	{
+		if (rateLimiter == null)
+		{
+			this.rateLimiter = RateLimiter.create(Double.MAX_VALUE);
+		}
+		else {
+			this.rateLimiter = rateLimiter;
+		}
+
 		this.apiKey = apiKey;
 		if (optEndPoint != null && !optEndPoint.isEmpty())
+		{
 			this.endPoint = optEndPoint;
-
+		}
+		else {
+			this.endPoint = ENDPOINT;
+		}
 		restAdapter =
 				new RestAdapter.Builder().setEndpoint(endPoint).setLogLevel(LogLevel.NONE).setConverter(new GsonConverter(gson))
 						.build();
@@ -75,6 +92,7 @@ public class Freddie
 		if (series.getData() != null && !series.getData().isEmpty())
 			return series;
 
+		rateLimiter.acquire();
 		ObservationCollection observations;
 		try {
 			observations = service.getObservations(series.getId(), apiKey, RETURNTYPE);
@@ -97,6 +115,7 @@ public class Freddie
 	 */
 	public Series getSeriesById(String seriesId, boolean withData) throws Exception
 	{
+		rateLimiter.acquire();
 		Series series;
 		try {
 			series = service.getSeries(seriesId, apiKey, RETURNTYPE);
@@ -119,6 +138,7 @@ public class Freddie
 
 	public Category getCategoryById(int categoryId) throws Exception
 	{
+		rateLimiter.acquire();
 		Category category;
 		try {
 			category = service.getCategoryById(categoryId, apiKey, RETURNTYPE);
@@ -132,6 +152,7 @@ public class Freddie
 
 	public List<Category> getCategoryChildren(int categoryId) throws Exception
 	{
+		rateLimiter.acquire();
 		CategoryCollection categories;
 		try {
 			categories = service.getCategoryChildren(categoryId, apiKey, RETURNTYPE);
@@ -145,6 +166,7 @@ public class Freddie
 
 	public Release getReleaseById(int releaseId) throws Exception
 	{
+		rateLimiter.acquire();
 		Release release;
 		try {
 			release = service.getReleaseById(releaseId, apiKey, RETURNTYPE);
@@ -158,6 +180,7 @@ public class Freddie
 
 	public List<Series> getSeriesByReleaseId(int releaseId) throws Exception
 	{
+		rateLimiter.acquire();
 		SeriesCollection seriesCollection;
 		try {
 			seriesCollection = service.getSeriesByReleaseId(releaseId, apiKey, RETURNTYPE);
@@ -171,6 +194,7 @@ public class Freddie
 	
 	public List<Series> getSeriesByCategoryId(int categoryId) throws Exception
 	{
+		rateLimiter.acquire();
 		SeriesCollection seriesCollection;
 		try {
 			seriesCollection = service.getSeriesByCategoryId(categoryId, apiKey, RETURNTYPE);
