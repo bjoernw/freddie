@@ -6,5 +6,4 @@ bin/*
 *.iml
 build
 /bin
-.settings 
-.settings/*
+.settings/
