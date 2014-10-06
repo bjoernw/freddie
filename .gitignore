@@ -5,3 +5,6 @@ bin/*
 .project
 *.iml
 build
+/bin
+.settings 
+.settings/*
