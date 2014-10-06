@@ -1,5 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.8
 version = '1.0'
@@ -24,5 +25,22 @@ dependencies {
 jar {
     manifest {
         attributes 'Implementation-Title': 'Freddie', 'Implementation-Version': version
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'com.bw'
+            artifactId rootProject.name
+            version '1.0'
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            // change to point to your repo, e.g. http://my.org/repo
+            url "$buildDir/repo"
+        }
     }
 }
