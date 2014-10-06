@@ -89,7 +89,6 @@ public class FreddieTest
 			Assert.assertNotNull(s);
 			Assert.assertNotNull(s.getId());
 			Assert.assertNull(s.getData());
-			Assert.assertTrue(s.getData().isEmpty());
 		}
 	}
 
@@ -104,7 +103,6 @@ public class FreddieTest
 			Assert.assertNotNull(s);
 			Assert.assertNotNull(s.getId());
 			Assert.assertNull(s.getData());
-			Assert.assertTrue(s.getData().isEmpty());
 		}
 	}
 }

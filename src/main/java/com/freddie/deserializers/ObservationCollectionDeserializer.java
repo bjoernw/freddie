@@ -7,14 +7,14 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
+import com.freddie.helpers.ObservationCollection;
+import com.freddie.objects.Observation;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.freddie.helpers.ObservationCollection;
-import com.freddie.objects.Observation;
 
 
 public class ObservationCollectionDeserializer implements JsonDeserializer<ObservationCollection>
@@ -23,10 +23,8 @@ public class ObservationCollectionDeserializer implements JsonDeserializer<Obser
 	private static final Logger log = Logger.getLogger(ObservationCollectionDeserializer.class);
 
 	@Override
-	public ObservationCollection deserialize(
-			JsonElement json,
-			Type arg1,
-			JsonDeserializationContext arg2) throws JsonParseException
+	public ObservationCollection deserialize(JsonElement json, Type arg1, JsonDeserializationContext arg2)
+			throws JsonParseException
 	{
 		JsonObject obj = (JsonObject) json;
 		JsonElement obsArray = obj.get("observations");
@@ -69,8 +67,15 @@ public class ObservationCollectionDeserializer implements JsonDeserializer<Obser
 				log.error("Gson Parse Error");
 				return null;
 			}
-			Double value = objObs.get("value").getAsDouble();
-			collection.addObservation(new Observation(realtimeStart, realtimeEnd, date, value));
+			Double value = 0.0;
+			JsonElement element = objObs.get("value");
+			String elementValue = element.getAsString();
+
+			if (!".".equalsIgnoreCase(elementValue))
+			{
+				value = element.getAsDouble();
+				collection.addObservation(new Observation(realtimeStart, realtimeEnd, date, value));
+			}
 		}
 		return collection;
 

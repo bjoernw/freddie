@@ -1,24 +1,34 @@
 package com.freddie.client;
 
-import com.google.common.util.concurrent.RateLimiter;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import retrofit.RestAdapter;
+import retrofit.RestAdapter.LogLevel;
+import retrofit.converter.GsonConverter;
+
 import com.freddie.api.definition.IFredApiService;
-import com.freddie.deserializers.*;
+import com.freddie.deserializers.CategoryCollectionDeserializer;
+import com.freddie.deserializers.CategoryDeserializer;
+import com.freddie.deserializers.ObservationCollectionDeserializer;
+import com.freddie.deserializers.ReleaseDeserializer;
+import com.freddie.deserializers.SeriesCollectionDeserializer;
+import com.freddie.deserializers.SeriesDeserializer;
 import com.freddie.helpers.CategoryCollection;
 import com.freddie.helpers.ObservationCollection;
 import com.freddie.helpers.SeriesCollection;
 import com.freddie.objects.Category;
+import com.freddie.objects.Observation;
 import com.freddie.objects.Release;
 import com.freddie.objects.Series;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import retrofit.RestAdapter;
-import retrofit.RestAdapter.LogLevel;
-import retrofit.converter.GsonConverter;
-import javax.annotation.Nullable;
-import java.util.List;
+import com.google.common.util.concurrent.RateLimiter;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * @author bweidlich
@@ -36,6 +46,7 @@ public class Freddie
 			.registerTypeAdapter(Series.class, new SeriesDeserializer())
 			.registerTypeAdapter(Category.class, new CategoryDeserializer())
 			.registerTypeAdapter(CategoryCollection.class, new CategoryCollectionDeserializer())
+			.registerTypeAdapter(SeriesCollection.class, new SeriesCollectionDeserializer())
 			.registerTypeAdapter(Release.class, new ReleaseDeserializer()).create();
 
 	private static RestAdapter restAdapter = null;
@@ -50,7 +61,7 @@ public class Freddie
 
 	public Freddie(String apiKey, @Nullable String optEndPoint)
 	{
-		this(apiKey,optEndPoint, 2);
+		this(apiKey, optEndPoint, 2);
 	}
 
 	public Freddie(String apiKey, @Nullable String optEndPoint, double requestsPerMinute)
@@ -64,7 +75,8 @@ public class Freddie
 		{
 			this.rateLimiter = RateLimiter.create(Double.MAX_VALUE);
 		}
-		else {
+		else
+		{
 			this.rateLimiter = rateLimiter;
 		}
 
@@ -73,7 +85,8 @@ public class Freddie
 		{
 			this.endPoint = optEndPoint;
 		}
-		else {
+		else
+		{
 			this.endPoint = ENDPOINT;
 		}
 		restAdapter =
@@ -94,13 +107,16 @@ public class Freddie
 
 		rateLimiter.acquire();
 		ObservationCollection observations;
-		try {
+		try
+		{
 			observations = service.getObservations(series.getId(), apiKey, RETURNTYPE);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			log.error(e);
 			throw e;
 		}
-		
+
 		series.setData(observations.getObservations());
 		return series;
 	}
@@ -117,13 +133,16 @@ public class Freddie
 	{
 		rateLimiter.acquire();
 		Series series;
-		try {
+		try
+		{
 			series = service.getSeries(seriesId, apiKey, RETURNTYPE);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			log.error(e);
 			throw e;
 		}
-		
+
 		if (series != null)
 		{
 			if (withData)
@@ -140,9 +159,12 @@ public class Freddie
 	{
 		rateLimiter.acquire();
 		Category category;
-		try {
+		try
+		{
 			category = service.getCategoryById(categoryId, apiKey, RETURNTYPE);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			log.error(e);
 			throw e;
 		}
@@ -154,13 +176,16 @@ public class Freddie
 	{
 		rateLimiter.acquire();
 		CategoryCollection categories;
-		try {
+		try
+		{
 			categories = service.getCategoryChildren(categoryId, apiKey, RETURNTYPE);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			log.error(e);
 			throw e;
 		}
-		
+
 		return categories.getCategories();
 	}
 
@@ -168,13 +193,16 @@ public class Freddie
 	{
 		rateLimiter.acquire();
 		Release release;
-		try {
+		try
+		{
 			release = service.getReleaseById(releaseId, apiKey, RETURNTYPE);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			log.error(e);
 			throw e;
 		}
-		
+
 		return release;
 	}
 
@@ -182,21 +210,25 @@ public class Freddie
 	{
 		rateLimiter.acquire();
 		SeriesCollection seriesCollection;
-		try {
+		try
+		{
 			seriesCollection = service.getSeriesByReleaseId(releaseId, apiKey, RETURNTYPE);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			log.error(e);
 			throw e;
 		}
-		
+
 		return seriesCollection.getSeries();
 	}
-	
+
 	public List<Series> getSeriesByCategoryId(int categoryId) throws Exception
 	{
 		rateLimiter.acquire();
 		SeriesCollection seriesCollection;
-		try {
+		try
+		{
 			seriesCollection = service.getSeriesByCategoryId(categoryId, apiKey, RETURNTYPE);
 		}
 		catch (Exception e)
@@ -206,4 +238,53 @@ public class Freddie
 		}
 		return seriesCollection.getSeries();
 	}
+
+	public List<Observation> getObservations(String seriesId, String frequency) throws Exception
+	{
+		rateLimiter.acquire();
+		ObservationCollection observationCollection = null;
+		List<Observation> observations = null;
+		try
+		{
+			if (frequency != null)
+			{
+				observationCollection = service.getObservationsByFrequency(seriesId, apiKey, frequency, RETURNTYPE);
+			}
+			else
+			{
+				observationCollection = service.getObservations(seriesId, apiKey, RETURNTYPE);
+			}
+
+			if (observationCollection != null)
+			{
+				observations = observationCollection.getObservations();
+			}
+
+		}
+		catch (Exception e)
+		{
+			log.error(e);
+			throw e;
+		}
+
+		return observations;
+	}
+
+	public Release getReleaseBySeriesId(String seriesId) throws Exception
+	{
+		rateLimiter.acquire();
+		Release release = null;
+		try
+		{
+			release = service.getReleaseBySeriesId(seriesId, apiKey, RETURNTYPE);
+		}
+		catch (Exception e)
+		{
+			log.error(e);
+			throw e;
+		}
+
+		return release;
+	}
+
 }

@@ -1,18 +1,12 @@
 package com.freddie.deserializers;
 
+import com.freddie.objects.Series;
+import com.google.gson.*;
+import org.apache.log4j.Logger;
+
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
-import org.apache.log4j.Logger;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.freddie.objects.Series;
 
 public class SeriesDeserializer implements JsonDeserializer<Series>
 {
@@ -32,16 +26,24 @@ public class SeriesDeserializer implements JsonDeserializer<Series>
 			if (seriesCollection.size() == 1)
 			{
 				JsonObject seriesObj = (JsonObject) seriesCollection.get(0);
-				series.setId(seriesObj.get("id").getAsString());
-				series.setTitle(seriesObj.get("title").getAsString());
-				series.setFrequency(seriesObj.get("frequency").getAsString());
-				series.setFrequencyShort(seriesObj.get("frequency_short").getAsString());
-				series.setUnits(seriesObj.get("units").getAsString());
-				series.setUnitsShort(seriesObj.get("units_short").getAsString());
-				series.setNotes(seriesObj.get("notes").getAsString());
-				series.setPopularity(seriesObj.get("popularity").getAsInt());
-				series.setSeasonalAdjustment(seriesObj.get("seasonal_adjustment").getAsString());
-				series.setSeasonalAdjustmentShort(seriesObj.get("seasonal_adjustment_short").getAsString());
+				try
+				{
+					series.setId(seriesObj.get("id").getAsString());
+					series.setTitle(seriesObj.get("title").getAsString());
+					series.setFrequency(seriesObj.get("frequency").getAsString());
+					series.setFrequencyShort(seriesObj.get("frequency_short").getAsString());
+					series.setUnits(seriesObj.get("units").getAsString());
+					series.setUnitsShort(seriesObj.get("units_short").getAsString());
+					series.setNotes(seriesObj.get("notes").getAsString());
+					series.setPopularity(seriesObj.get("popularity").getAsInt());
+					series.setSeasonalAdjustment(seriesObj.get("seasonal_adjustment").getAsString());
+					series.setSeasonalAdjustmentShort(seriesObj.get("seasonal_adjustment_short").getAsString());
+				}
+				catch(Exception e)
+				{
+					log.error("Gson Parse Error" + e.getMessage());
+				}
+
 
 				try
 				{
